@@ -46,7 +46,7 @@ static NSTouchBarItemIdentifier WindowControllerLabelIdentifier = @"com.TouchTes
 {
     if ([identifier isEqualToString:WindowControllerLabelIdentifier])
     {
-        NSTextField *theLabel = [NSTextField labelWithString:@"MailRaider Pro"];
+        NSTextField *theLabel = [NSTextField labelWithString:@"TouchTest"];
         
         NSCustomTouchBarItem *customItemForLabel =
         [[NSCustomTouchBarItem alloc] initWithIdentifier:WindowControllerLabelIdentifier];
