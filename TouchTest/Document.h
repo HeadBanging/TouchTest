@@ -9,11 +9,18 @@
 #import <Cocoa/Cocoa.h>
 
 @interface DocumentWindowController : NSWindowController
+{
+    
+}
+@property (assign) IBOutlet  NSTextView* documentContent;
 
 @end
 
 @interface Document : NSDocument
-
+{
+//   id documentStorage;
+}
+@property (readwrite, nonatomic, retain) NSMutableString *documentStorage;
 
 @end
 
