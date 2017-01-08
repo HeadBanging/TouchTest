@@ -16,7 +16,7 @@ static NSTouchBarItemIdentifier WindowControllerLabelIdentifier = @"com.TouchTes
 @end
 
 @implementation DocumentWindowController
-#pragma mark - Touchbar Handlers
+#pragma mark - Window Controller
 
 - (id)init {
     if (self=[super initWithWindowNibName:@"Document"])
@@ -29,6 +29,8 @@ static NSTouchBarItemIdentifier WindowControllerLabelIdentifier = @"com.TouchTes
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    
+    [self.documentContent setString:((Document*)self.document).documentStorage];
 }
 
 - (NSTouchBar *)makeTouchBar
@@ -66,7 +68,10 @@ static NSTouchBarItemIdentifier WindowControllerLabelIdentifier = @"com.TouchTes
 
 @end
 
+#pragma mark - Document Controller
+
 @implementation Document
+@synthesize documentStorage;
 
 - (instancetype)init {
     self = [super init];
@@ -93,12 +98,26 @@ static NSTouchBarItemIdentifier WindowControllerLabelIdentifier = @"com.TouchTes
     return @"Document";
 }
 
-
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
     // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-    [NSException raise:@"UnimplementedMethod" format:@"%@ is unimplemented", NSStringFromSelector(_cmd)];
-    return nil;
+    NSDictionary * typeDict;
+    
+    if ([typeName compare:@"public.plain-text"] == NSOrderedSame ) {
+        typeDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                 NSPlainTextDocumentType,
+                 NSDocumentTypeDocumentAttribute,nil];
+    } else {
+        NSLog(@"ERROR: dataOfType =%@",typeName);
+        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain
+                                         code:unimpErr
+                                     userInfo:NULL];
+        return NULL;
+    } // end if
+    
+    NSString * testString = @"Little Pig, Little Pig, Let Me In,\nNot by the hairs on my Chinny Chin Chin\n";
+    NSData * testData = [testString dataUsingEncoding:NSASCIIStringEncoding];
+    return testData;
 }
 
 
@@ -106,7 +125,17 @@ static NSTouchBarItemIdentifier WindowControllerLabelIdentifier = @"com.TouchTes
     // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
     // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
     // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
-    [NSException raise:@"UnimplementedMethod" format:@"%@ is unimplemented", NSStringFromSelector(_cmd)];
+    if ([typeName compare:@"public.plain-text"] != NSOrderedSame) {
+        NSLog(@"ERROR: readFromData ofType =%@",typeName);
+        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain
+                                         code:unimpErr
+                                     userInfo:NULL];
+        return NO;
+    } // end if
+    
+    NSString* testString = [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
+    
+    self.documentStorage = [NSMutableString stringWithString:testString];
     return YES;
 }
 
